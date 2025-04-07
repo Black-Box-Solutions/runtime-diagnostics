@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Reflection;
-using System.Runtime;
-using System.Runtime.InteropServices;
 
 namespace BlackBoxSolutions.Diagnostics
 {
@@ -12,20 +10,6 @@ namespace BlackBoxSolutions.Diagnostics
     /// </summary>
     public static class DiagnosticMechanics
     {
-        /// <summary>
-        /// Determines whether the specified assembly is a Debug build.
-        /// </summary>
-        /// <param name="assembly">The assembly to check.</param>
-        /// <returns>True if the assembly is a Debug build; otherwise, false.</returns>
-        public static bool IsDebugBuild(Assembly assembly)
-        {
-            var debuggableAttr = assembly.GetCustomAttribute<DebuggableAttribute>();
-            if (debuggableAttr == null)
-                return false; // No attribute => Optimized (Release)
-
-            return debuggableAttr.IsJITTrackingEnabled && debuggableAttr.IsJITOptimizerDisabled;
-        }
-
         /// <summary>
         /// Determines whether the specified assembly is an Optimized (Release) build.
         /// </summary>
