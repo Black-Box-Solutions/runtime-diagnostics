@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Solution Items/" Id="8ec462fd-d22e-90a8-e5ce-7e832ba40c5d">
+    <File Path=".gitignore" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="BlackBoxSolutions.Diagnostics.csproj" Id="10ef9b01-4845-cea9-07d4-d64d300713f7" />
+</Solution>

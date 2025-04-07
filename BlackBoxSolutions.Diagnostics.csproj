@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFrameworks>netstandard2.0;net5.0;net6.0;net7.0;net8.0;net9.0;</TargetFrameworks>
+	  <ApplicationIcon>black-box-solutions.ico</ApplicationIcon>
+	  <AnalysisLevel>latest</AnalysisLevel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove=".gitignore" />
+    <None Remove="BlackBoxSolutions.Diagnostics.slnx" />
+    <None Remove="LICENSE" />
+    <None Remove="README.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="black-box-solutions.ico" />
+  </ItemGroup>
+
+</Project>
