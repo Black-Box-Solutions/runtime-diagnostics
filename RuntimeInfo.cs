@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Runtime;
 using System.Runtime.InteropServices;
+using System.Linq;
 
 namespace BlackBoxSolutions.Diagnostics
 {
@@ -60,11 +61,15 @@ namespace BlackBoxSolutions.Diagnostics
 
         public override string ToString()
         {
-#if NET5_0_OR_GREATER
-            return $"{nameof(Architecture)}: {Architecture}, {nameof(CoreLibInfoVersion)}: {CoreLibInfoVersion}, {nameof(CoreLibLocation)}: {CoreLibLocation}, {nameof(GCMaxGeneration)}: {GCMaxGeneration}, {nameof(Is64BitOperatingSystem)}: {Is64BitOperatingSystem}, {nameof(Is64BitProcess)}: {Is64BitProcess}, {nameof(IsJITOptimized)}: {IsJITOptimized}, {nameof(IsNetCore)}: {IsNetCore}, {nameof(IsServerGC)}: {IsServerGC}, {nameof(OSDescription)}: {OSDescription}, {nameof(ProcessorCount)}: {ProcessorCount}, {nameof(RuntimeDescription)}: {RuntimeDescription}, {nameof(RuntimeDirectory)}: {RuntimeDirectory}, {nameof(RuntimeIdentifier)}: {RuntimeIdentifier}, {nameof(RuntimeVersion)}: {RuntimeVersion}, {nameof(TieredCompilationEnabled)}: {TieredCompilationEnabled}";
-#else
-            return $"{nameof(Architecture)}: {Architecture}, {nameof(CoreLibInfoVersion)}: {CoreLibInfoVersion}, {nameof(CoreLibLocation)}: {CoreLibLocation}, {nameof(GCMaxGeneration)}: {GCMaxGeneration}, {nameof(Is64BitOperatingSystem)}: {Is64BitOperatingSystem}, {nameof(Is64BitProcess)}: {Is64BitProcess}, {nameof(IsJITOptimized)}: {IsJITOptimized}, {nameof(IsNetCore)}: {IsNetCore}, {nameof(IsServerGC)}: {IsServerGC}, {nameof(OSDescription)}: {OSDescription}, {nameof(ProcessorCount)}: {ProcessorCount}, {nameof(RuntimeDescription)}: {RuntimeDescription}, {nameof(RuntimeDirectory)}: {RuntimeDirectory}, {nameof(RuntimeVersion)}: {RuntimeVersion}, {nameof(TieredCompilationEnabled)}: {TieredCompilationEnabled}";
-#endif
+            var properties = GetType()
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .OrderBy(p => p.Name);
+
+            return string.Join(", ", properties.Select(p =>
+            {
+                var value = p.GetValue(this);
+                return $"{p.Name}: {value}";
+            }));
         }
     }
 }
