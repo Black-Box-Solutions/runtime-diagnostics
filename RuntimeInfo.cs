@@ -31,6 +31,10 @@ namespace BlackBoxSolutions.Diagnostics
         public string RuntimeVersion { get; private set; }
         public bool TieredCompilationEnabled { get; private set; }
 
+        /// <summary>
+        /// Gets the runtime information for the current environment.
+        /// </summary>
+        /// <returns></returns>
         public static RuntimeInfo GetRuntimeInfo()
         {
             var coreLibAssembly = typeof(object).Assembly;
@@ -59,6 +63,10 @@ namespace BlackBoxSolutions.Diagnostics
             };
         }
 
+        /// <summary>
+        /// Returns a comma-separated string of the properties and their values in alphabetical order.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             var properties = GetType()
