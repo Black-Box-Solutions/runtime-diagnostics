@@ -99,7 +99,7 @@ namespace BlackBoxSolutions.Diagnostics
         /// Retrieves runtime information about the current environment.
         /// </summary>
         /// <returns>A <see cref="RuntimeInfo"/> object containing runtime details.</returns>
-        [SuppressMessage("Performance", "HAA0102:Non-overridden virtual method call on value type", Justification = "<Pending>")]
+        [SuppressMessage("Performance", "HAA0102:Non-overridden virtual method call on value type", Justification = "This is just for diagnostics")]
         public static RuntimeInfo GetRuntimeInfo()
         {
             var coreLibAssembly = typeof(object).Assembly;
@@ -132,7 +132,7 @@ namespace BlackBoxSolutions.Diagnostics
         /// Returns a string representation of the runtime information.
         /// </summary>
         /// <returns>A string containing the runtime information properties and their values.</returns>
-        [SuppressMessage("Performance", "HAA0301:Closure Allocation Source", Justification = "<Pending>")]
+        [SuppressMessage("Performance", "HAA0301:Closure Allocation Source", Justification = "This is just for diagnostics and the number of properties will never be very large")]
         public override string ToString()
         {
             var properties = GetType()
