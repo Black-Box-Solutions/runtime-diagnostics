@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BlackBoxSolutions.Diagnostics
 {
@@ -24,17 +25,14 @@ namespace BlackBoxSolutions.Diagnostics
         public string OSDescription { get; private set; }
         public int ProcessorCount { get; private set; }
 #if NET5_0_OR_GREATER
-        public string RuntimeIdentifier { get; private set; }
+           public string RuntimeIdentifier { get; private set; }
 #endif
         public string RuntimeDescription { get; private set; }
         public string RuntimeDirectory { get; private set; }
         public string RuntimeVersion { get; private set; }
         public bool TieredCompilationEnabled { get; private set; }
 
-        /// <summary>
-        /// Gets the runtime information for the current environment.
-        /// </summary>
-        /// <returns></returns>
+        [SuppressMessage("Performance", "HAA0102:Non-overridden virtual method call on value type", Justification = "<Pending>")]
         public static RuntimeInfo GetRuntimeInfo()
         {
             var coreLibAssembly = typeof(object).Assembly;
@@ -54,7 +52,7 @@ namespace BlackBoxSolutions.Diagnostics
                 OSDescription = RuntimeInformation.OSDescription,
                 ProcessorCount = Environment.ProcessorCount,
 #if NET5_0_OR_GREATER
-                RuntimeIdentifier = RuntimeInformation.RuntimeIdentifier,
+                   RuntimeIdentifier = RuntimeInformation.RuntimeIdentifier,  
 #endif
                 RuntimeDescription = RuntimeInformation.FrameworkDescription,
                 RuntimeDirectory = AppContext.BaseDirectory,
@@ -63,10 +61,7 @@ namespace BlackBoxSolutions.Diagnostics
             };
         }
 
-        /// <summary>
-        /// Returns a comma-separated string of the properties and their values in alphabetical order.
-        /// </summary>
-        /// <returns></returns>
+        [SuppressMessage("Performance", "HAA0301:Closure Allocation Source", Justification = "<Pending>")]
         public override string ToString()
         {
             var properties = GetType()
