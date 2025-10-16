@@ -14,8 +14,6 @@ namespace BlackBoxSolutions.Diagnostics
     public class RuntimeInfo
     {
 
-        //TODO change this object into a JSON object for easier display and serialization.
-
         #region Machine-specific properties
 
         /// <summary>
@@ -203,6 +201,43 @@ namespace BlackBoxSolutions.Diagnostics
             output.WriteLine();
         }
 
+#if NET5_0_OR_GREATER
+        /// <summary>
+        /// Serialize to JSON using System.Text.Json (NET5+).
+        /// </summary>
+        /// <param name="options">Serialization options; if null a default indented option is used.</param>
+        public string ToJson(System.Text.Json.JsonSerializerOptions options = null)
+        {
+            options ??= new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
+            return System.Text.Json.JsonSerializer.Serialize(this, options);
+        }
+
+        /// <summary>
+        /// Writes the runtime snapshot as JSON to the provided TextWriter (NET5+).
+        /// </summary>
+        public static void DisplayRuntimeInformationJson(TextWriter output, System.Text.Json.JsonSerializerOptions options = null)
+        {
+            output.WriteLine(GetRuntimeInfo().ToJson(options));
+        }
+#else
+        /// <summary>
+        /// Serialize to JSON using Newtonsoft.Json (fallback for netstandard2.0).
+        /// Requires the Newtonsoft.Json package when targeting netstandard2.0.
+        /// </summary>
+        public string ToJson()
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
+        }
+
+        /// <summary>
+        /// Writes the runtime snapshot as JSON to the provided TextWriter (netstandard2.0 fallback).
+        /// </summary>
+        public static void DisplayRuntimeInformationJson(TextWriter output)
+        {
+            output.WriteLine(GetRuntimeInfo().ToJson());
+        }
+#endif
+
         /// <summary>
         /// Returns a string representation of the runtime information.
         /// </summary>
@@ -211,7 +246,6 @@ namespace BlackBoxSolutions.Diagnostics
         {
             var properties = GetType()
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            //.OrderBy(p => p.Name);
 
             return string.Join(", ", properties.Select(p =>
             {

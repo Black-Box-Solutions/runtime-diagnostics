@@ -1,44 +1,46 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	  <TargetFrameworks>netstandard2.0;net5.0;net6.0;net7.0;net8.0;net9.0;</TargetFrameworks>
-	  <ApplicationIcon>black-box-solutions.ico</ApplicationIcon>
-	  <AnalysisLevel>latest</AnalysisLevel>
-	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-	  <Copyright>Black Box Solutions, Inc. 2025</Copyright>
-	  <PackageProjectUrl>https://github.com/Black-Box-Solutions/runtime-diagnostics</PackageProjectUrl>
-	  <PackageIcon>black-box-solutions.png</PackageIcon>
-	  <PackageReadmeFile>README.md</PackageReadmeFile>
-	  <RepositoryUrl>https://github.com/Black-Box-Solutions/runtime-diagnostics</RepositoryUrl>
-	  <PackageTags>diagnostic;runtime;</PackageTags>
-	  <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-	  <Description>A utility library for returning diagnostic info about the running .NET application at runtime.</Description>
-	  <Title>runtime-diagnostics</Title>
-	  <RepositoryType>git</RepositoryType>
-	  <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;net5.0;net6.0;net7.0;net8.0;net9.0;</TargetFrameworks>
+		<ApplicationIcon>black-box-solutions.ico</ApplicationIcon>
+		<AnalysisLevel>latest</AnalysisLevel>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Copyright>Black Box Solutions, Inc. 2025</Copyright>
+		<PackageProjectUrl>https://github.com/Black-Box-Solutions/runtime-diagnostics</PackageProjectUrl>
+		<PackageIcon>black-box-solutions.png</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/Black-Box-Solutions/runtime-diagnostics</RepositoryUrl>
+		<PackageTags>diagnostic;runtime;</PackageTags>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<Description>A utility library for returning diagnostic info about the running .NET application at runtime.</Description>
+		<Title>runtime-diagnostics</Title>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+	</PropertyGroup>
 
-  <ItemGroup>
-	<None Remove=".gitignore" />
-	<None Remove="BlackBoxSolutions.Diagnostics.slnx" />
-	<None Remove="LICENSE" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove=".gitignore" />
+		<None Remove="BlackBoxSolutions.Diagnostics.slnx" />
+		<None Remove="LICENSE" />
+	</ItemGroup>
 
-  <ItemGroup>
-	<Resource Include="black-box-solutions.ico" />
-	<Resource Include="black-box-solutions.png">
-	  <Pack>True</Pack>
-	  <PackagePath>\</PackagePath>
-	</Resource>
-	<Resource Include="LICENSE" />
-	<Resource Include="README.md" />
-  </ItemGroup>
+	<ItemGroup>
+		<Resource Include="black-box-solutions.ico" />
+		<Resource Include="black-box-solutions.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</Resource>
+		<Resource Include="LICENSE" />
+		<Resource Include="README.md" />
+	</ItemGroup>
 
-  <ItemGroup>
-	<None Include="README.md">
-	  <Pack>True</Pack>
-	  <PackagePath>\</PackagePath>
-	</None>
-  </ItemGroup>
-
+	<ItemGroup>
+		<None Include="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
 </Project>
