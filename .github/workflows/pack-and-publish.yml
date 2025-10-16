@@ -1,0 +1,47 @@
+name: CI - Build, Pack and Publish
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'   # publish on semver tags like v1.0.0
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release --no-restore
+
+      - name: Pack
+        run: |
+          dotnet pack -c Release -o ./nupkgs /p:IncludeSymbols=true
+
+      - name: Publish to NuGet.org
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          for pkg in ./nupkgs/*.nupkg; do
+            echo "Pushing $pkg"
+            dotnet nuget push "$pkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          done
+          for s in ./nupkgs/*.snupkg; do
+            echo "Pushing symbol $s"
+            dotnet nuget push "$s" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate || true
+          done
