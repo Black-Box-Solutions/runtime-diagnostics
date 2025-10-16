@@ -1,46 +1,51 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
+		<!-- Multi-target frameworks -->
 		<TargetFrameworks>netstandard2.0;net5.0;net6.0;net7.0;net8.0;net9.0;</TargetFrameworks>
 		<ApplicationIcon>black-box-solutions.ico</ApplicationIcon>
 		<AnalysisLevel>latest</AnalysisLevel>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Copyright>Black Box Solutions, Inc. 2025</Copyright>
+
+		<!-- Package metadata -->
+		<PackageId>BlackBoxSolutions.RuntimeDiagnostics</PackageId>
+		<Version>1.0.0</Version>
+		<Authors>Black Box Solutions</Authors>
+		<Company>Black Box Solutions</Company>
+		<Description>Helpers to capture and display runtime diagnostics (runtime snapshot and .NET environment variables).</Description>
+		<PackageTags>dotnet diagnostics runtime environment</PackageTags>
+		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/Black-Box-Solutions/runtime-diagnostics</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
 		<PackageProjectUrl>https://github.com/Black-Box-Solutions/runtime-diagnostics</PackageProjectUrl>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageIcon>black-box-solutions.png</PackageIcon>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/Black-Box-Solutions/runtime-diagnostics</RepositoryUrl>
-		<PackageTags>diagnostic;runtime;</PackageTags>
-		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<Description>A utility library for returning diagnostic info about the running .NET application at runtime.</Description>
-		<Title>runtime-diagnostics</Title>
-		<RepositoryType>git</RepositoryType>
-		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+
+		<!-- Symbols/source linking -->
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
+	<!-- Newtonsoft Conditional dependency for netstandard2.0 only -->
+	<!--
+		NOTE: For netstandard2.0, NewtonsoftJson is required for JSON serialization.
+		For .NET 5.0 and later, System.Text.Json is used as it is built-in.
+		Ensure that code handles JSON serialization consistently across all target frameworks.
+	-->
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+	</ItemGroup>
+
+	<!-- SourceLink for GitHub -->
 	<ItemGroup>
-		<None Remove=".gitignore" />
-		<None Remove="BlackBoxSolutions.Diagnostics.slnx" />
-		<None Remove="LICENSE" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="all" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Resource Include="black-box-solutions.ico" />
-		<Resource Include="black-box-solutions.png">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</Resource>
-		<Resource Include="LICENSE" />
-		<Resource Include="README.md" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Include="README.md">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
-	<ItemGroup>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<None Include=".github\workflows\pack-and-publish.yml" />
+		<None Include="README.md" Pack="true" PackagePath="" />
+		<None Include="LICENSE" Pack="true" PackagePath="" Condition="Exists('LICENSE')" />
 	</ItemGroup>
 </Project>
