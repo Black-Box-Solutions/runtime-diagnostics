@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 
 namespace BlackBoxSolutions.Diagnostics
@@ -8,7 +9,7 @@ namespace BlackBoxSolutions.Diagnostics
     /// Based on https://dave-black.blogspot.com/2011/12/how-to-tell-if-assembly-is-debug-or.html, this class returns
     /// methods to determine if an assembly is JIT-optimized or not.
     /// </summary>
-    public static class DiagnosticMechanics
+    public static partial class DiagnosticMechanics
     {
         /// <summary>
         /// Determines whether the specified assembly is an Optimized (Release) build.
@@ -49,6 +50,20 @@ namespace BlackBoxSolutions.Diagnostics
         public static bool IsTieredCompilationEnabled()
         {
             return !AppContext.TryGetSwitch("System.Runtime.TieredCompilation", out var enabled) || enabled;
+        }
+
+        /// <summary>
+        /// Writes the current build configuration of the executing assembly to the specified text output.
+        /// </summary>
+        /// <param name="output">The <see cref="TextWriter"/> to which the build configuration information is written. Cannot be <c>null</c>.</param>
+        public static void DisplayBuildConfiguration(TextWriter output)
+        {
+            output.WriteLine("================== Build Configuration ==================");
+            var assembly = Assembly.GetExecutingAssembly();
+            var buildConfig = GetBuildConfiguration(assembly);
+            output.WriteLine($"\tTest Harness is running as a {buildConfig} build.");
+            output.WriteLine("=========================================================");
+            output.WriteLine();
         }
     }
 }

@@ -19,26 +19,26 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove=".gitignore" />
-    <None Remove="BlackBoxSolutions.Diagnostics.slnx" />
-    <None Remove="LICENSE" />
+	<None Remove=".gitignore" />
+	<None Remove="BlackBoxSolutions.Diagnostics.slnx" />
+	<None Remove="LICENSE" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="black-box-solutions.ico" />
-    <Resource Include="black-box-solutions.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </Resource>
-    <Resource Include="LICENSE" />
-    <Resource Include="README.md" />
+	<Resource Include="black-box-solutions.ico" />
+	<Resource Include="black-box-solutions.png">
+	  <Pack>True</Pack>
+	  <PackagePath>\</PackagePath>
+	</Resource>
+	<Resource Include="LICENSE" />
+	<Resource Include="README.md" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
+	<None Include="README.md">
+	  <Pack>True</Pack>
+	  <PackagePath>\</PackagePath>
+	</None>
   </ItemGroup>
 
 </Project>
