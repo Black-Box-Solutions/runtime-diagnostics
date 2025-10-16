@@ -8,10 +8,33 @@ using System.Runtime.InteropServices;
 
 namespace BlackBoxSolutions.Diagnostics
 {
+    /// <summary>
+    /// Provides diagnostic utilities for displaying .NET environment variables and configuration settings.
+    /// </summary>
+    /// <remarks>This class contains methods to output categorized .NET environment variables and related
+    /// configuration details to a specified <see cref="TextWriter"/>. It is designed to assist in diagnosing runtime
+    /// configurations, including core runtime settings, ASP.NET Core configurations, networking options,
+    /// platform-specific variables, and legacy compatibility settings. <para> The output is organized into sections for
+    /// easier readability, with each section focusing on a specific category of environment variables. Sensitive
+    /// information, such as passwords, is masked where applicable. </para> <para> This class is intended for diagnostic
+    /// and troubleshooting purposes and should not be used in production environments where exposing environment
+    /// variables may pose a security risk. </para></remarks>
     public static partial class DiagnosticMechanics
     {
+        /// <summary>
+        /// Displays categorized .NET environment variables and their values to the specified output stream.
+        /// </summary>
+        /// <remarks>
+        /// The output is organized into sections for readability. Sensitive information such as certificate passwords
+        /// is masked. This method is intended for diagnostic and troubleshooting scenarios and should not be used
+        /// in environments where exposing environment variables is a security concern.
+        /// </remarks>
+        /// <param name="output">The <see cref="TextWriter"/> to which the environment variable information is written. This parameter cannot be <c>null</c>.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="output"/> is <c>null</c>.</exception>
         public static void DisplayDotNetEnvironmentVariables(TextWriter output)
         {
+            if (output == null) throw new ArgumentNullException(nameof(output));
+
             output.WriteLine("==================== .NET Environment Variables ====================");
 
             // Host Path Information Section
@@ -75,6 +98,10 @@ namespace BlackBoxSolutions.Diagnostics
             output.WriteLine("");
         }
 
+        /// <summary>
+        /// Writes host and entry-point path information for the current process.
+        /// </summary>
+        /// <param name="output">The <see cref="TextWriter"/> to write the host path information to.</param>
         private static void DisplayHostPathInformation(TextWriter output)
         {
             output.WriteLine("\tHOST PATH INFORMATION");
@@ -98,6 +125,10 @@ namespace BlackBoxSolutions.Diagnostics
             output.WriteLine();
         }
 
+        /// <summary>
+        /// Writes essential core runtime environment variables and their values.
+        /// </summary>
+        /// <param name="output">The <see cref="TextWriter"/> to write the variables to.</param>
         private static void DisplayCoreRuntimeVariables(TextWriter output)
         {
             output.WriteLine("\tEssential Runtime Configuration:");
@@ -126,6 +157,10 @@ namespace BlackBoxSolutions.Diagnostics
             WriteEnvVarBlock(output, coreRuntimeVars);
         }
 
+        /// <summary>
+        /// Writes garbage collection related environment variables and their values.
+        /// </summary>
+        /// <param name="output">The <see cref="TextWriter"/> to write the variables to.</param>
         private static void DisplayGarbageCollectionVariables(TextWriter output)
         {
             output.WriteLine("\tGarbage Collection Configuration:");
@@ -141,6 +176,10 @@ namespace BlackBoxSolutions.Diagnostics
             WriteEnvVarBlock(output, gcVars);
         }
 
+        /// <summary>
+        /// Writes threading and performance related environment variables.
+        /// </summary>
+        /// <param name="output">The <see cref="TextWriter"/> to write the variables to.</param>
         private static void DisplayThreadingPerformanceVariables(TextWriter output)
         {
             output.WriteLine("\tThreading & Performance:");
@@ -154,6 +193,10 @@ namespace BlackBoxSolutions.Diagnostics
             WriteEnvVarBlock(output, threadingVars);
         }
 
+        /// <summary>
+        /// Writes ASP.NET Core specific environment variables (content root, environment, URLs, etc.).
+        /// </summary>
+        /// <param name="output">The <see cref="TextWriter"/> to write the variables to.</param>
         private static void DisplayAspNetCoreVariables(TextWriter output)
         {
             output.WriteLine("\tCore Environment Configuration:");
@@ -175,6 +218,13 @@ namespace BlackBoxSolutions.Diagnostics
             WriteEnvVarBlock(output, aspNetVars);
         }
 
+        /// <summary>
+        /// Writes ASP.NET Core security-related variables (certificate paths and passwords). Passwords are masked.
+        /// </summary>
+        /// <param name="output">The <see cref="TextWriter"/> to write the security variables to.</param>
+        /// <remarks>
+        /// If an environment variable name includes "Password" and a value is present, the value will be replaced with "***MASKED***".
+        /// </remarks>
         private static void DisplayAspNetSecurityVariables(TextWriter output)
         {
             output.WriteLine("\tSSL/TLS & Security Configuration:");
@@ -197,6 +247,10 @@ namespace BlackBoxSolutions.Diagnostics
             output.WriteLine();
         }
 
+        /// <summary>
+        /// Writes ASP.NET Core data protection related environment variables.
+        /// </summary>
+        /// <param name="output">The <see cref="TextWriter"/> to write the variables to.</param>
         private static void DisplayAspNetDataProtectionVariables(TextWriter output)
         {
             output.WriteLine("\tAuthentication & Data Protection:");
@@ -209,6 +263,10 @@ namespace BlackBoxSolutions.Diagnostics
             WriteEnvVarBlock(output, dataProtectionVars);
         }
 
+        /// <summary>
+        /// Writes networking and HTTP client related environment variables (HTTP2/HTTP3 and sockets handler settings).
+        /// </summary>
+        /// <param name="output">The <see cref="TextWriter"/> to write the networking variables to.</param>
         private static void DisplayNetworkingVariables(TextWriter output)
         {
             output.WriteLine("\tHTTP Client & Protocol Support:");
@@ -225,6 +283,10 @@ namespace BlackBoxSolutions.Diagnostics
             WriteEnvVarBlock(output, networkingVars);
         }
 
+        /// <summary>
+        /// Writes platform-specific environment flags and prints the detected current platform (Windows/Linux/macOS).
+        /// </summary>
+        /// <param name="output">The <see cref="TextWriter"/> to write the platform-specific variables and detected platform to.</param>
         private static void DisplayPlatformSpecificVariables(TextWriter output)
         {
             string[] platformVars = new[]
@@ -249,6 +311,10 @@ namespace BlackBoxSolutions.Diagnostics
             WriteEnvVarBlock(output, platformVars);
         }
 
+        /// <summary>
+        /// Writes container-related environment variables used to detect containerized execution and console settings.
+        /// </summary>
+        /// <param name="output">The <see cref="TextWriter"/> to write the container variables to.</param>
         private static void DisplayContainerVariables(TextWriter output)
         {
             output.WriteLine("\tContainer Detection & Optimization:");
@@ -263,6 +329,10 @@ namespace BlackBoxSolutions.Diagnostics
             WriteEnvVarBlock(output, containerVars);
         }
 
+        /// <summary>
+        /// Writes commonly used SDK-related environment variables that affect developer experience and CLI behavior.
+        /// </summary>
+        /// <param name="output">The <see cref="TextWriter"/> to write the SDK variables to.</param>
         private static void DisplaySdkVariables(TextWriter output)
         {
             output.WriteLine("\tEssential Customer Configuration:");
@@ -278,6 +348,10 @@ namespace BlackBoxSolutions.Diagnostics
             WriteEnvVarBlock(output, sdkVars);
         }
 
+        /// <summary>
+        /// Writes package management related environment variables that influence NuGet behavior and caches.
+        /// </summary>
+        /// <param name="output">The <see cref="TextWriter"/> to write the package management variables to.</param>
         private static void DisplayPackageManagementVariables(TextWriter output)
         {
             output.WriteLine("\tPackage Management (Customer Impact):");
@@ -293,6 +367,10 @@ namespace BlackBoxSolutions.Diagnostics
             WriteEnvVarBlock(output, packageVars);
         }
 
+        /// <summary>
+        /// Writes legacy compatibility environment variables such as COREHOST_* and COMPlus_* settings.
+        /// </summary>
+        /// <param name="output">The <see cref="TextWriter"/> to write the legacy compatibility variables to.</param>
         private static void DisplayLegacyVariables(TextWriter output)
         {
             output.WriteLine("\tCOREHOST_* Variables (Still Supported):");
@@ -325,6 +403,15 @@ namespace BlackBoxSolutions.Diagnostics
             WriteEnvVarBlock(output, complusVars);
         }
 
+        /// <summary>
+        /// Writes a block of environment variables and their values to the provided <see cref="TextWriter"/>.
+        /// </summary>
+        /// <param name="output">The <see cref="TextWriter"/> to write the variables to.</param>
+        /// <param name="variables">A collection of environment variable names to query and print.</param>
+        /// <remarks>
+        /// For each variable in <paramref name="variables"/>, this method writes a line containing the variable name
+        /// and its value or "(not set)" if the variable is not present. After the block it writes a blank line to separate sections.
+        /// </remarks>
         private static void WriteEnvVarBlock(TextWriter output, IEnumerable<string> variables)
         {
             foreach (string variable in variables)
