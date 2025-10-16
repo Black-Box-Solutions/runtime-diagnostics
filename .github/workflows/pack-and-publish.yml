@@ -6,12 +6,15 @@ on:
       - 'v*.*.*'   # publish on semver tags like v1.0.0
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 jobs:
-  build-and-publish:
+  build-and-pack:
     runs-on: ubuntu-latest
+    outputs:
+      nupkgs-path: ${{ steps.pack.outputs.nupkg-path }}
+      nbgv-version: ${{ steps.nbgv-version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -26,22 +29,71 @@ jobs:
       - name: Restore
         run: dotnet restore
 
+      - name: Install nbgv CLI (local)
+        run: dotnet tool install --tool-path ./.tools nbgv --version 3.8.118
+
+      - name: Echo computed package version (Nerdbank.GitVersioning)
+        id: nbgv-version
+        run: |
+          echo "Computed package version:"
+          ./.tools/nbgv get-version
+          VERSION=$(./.tools/nbgv get-version)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
       - name: Build
         run: dotnet build -c Release --no-restore
 
       - name: Pack
+        id: pack
         run: |
+          mkdir -p ./nupkgs
           dotnet pack -c Release -o ./nupkgs /p:IncludeSymbols=true
+          echo "nupkg-path=./nupkgs" >> $GITHUB_OUTPUT
 
-      - name: Publish to NuGet.org
+      - name: Upload nupkgs as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nupkgs
+          path: ./nupkgs
+
+      - name: Publish to NuGet.org (Trusted Publishing via GITHUB_TOKEN)
         env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo "Using configured GITHUB_TOKEN for push..."
           for pkg in ./nupkgs/*.nupkg; do
             echo "Pushing $pkg"
-            dotnet nuget push "$pkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+            dotnet nuget push "$pkg" --api-key "$GITHUB_TOKEN" --source https://api.nuget.org/v3/index.json --skip-duplicate
           done
           for s in ./nupkgs/*.snupkg; do
             echo "Pushing symbol $s"
-            dotnet nuget push "$s" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate || true
+            dotnet nuget push "$s" --api-key "$GITHUB_TOKEN" --source https://api.nuget.org/v3/index.json --skip-duplicate || true
           done
+
+  create-release:
+    needs: build-and-pack
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download built packages
+        uses: actions/download-artifact@v5
+        with:
+          name: nupkgs
+          path: ./nupkgs
+
+      - name: Create draft GitHub release and upload assets
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: |
+            Draft release created by CI for tag ${{ github.ref_name }}.
+
+            Computed package version: ${{ needs.build-and-pack.outputs.nbgv-version }}
+          draft: true
+          files: |
+            ./nupkgs/*.nupkg
+            ./nupkgs/*.snupkg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

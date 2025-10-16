@@ -1,14 +1,17 @@
 # runtime-diagnostics
 
-A small utility library that collects and prints diagnostic information about the running .NET application at runtime. It provides a strongly-typed `RuntimeInfo` snapshot and a set of environment-variable inspectors that surface useful runtime, GC, JIT, ASP.NET Core, networking, platform and container configuration used for troubleshooting and telemetry.
+A small utility library that collects and prints diagnostic information about the running .NET application at runtime.
+It provides a strongly-typed `RuntimeInfo` snapshot and a set of environment-variable inspectors that surface useful runtime,
+GC, JIT, ASP.NET Core, networking, platform and container configuration used for troubleshooting and telemetry.
 
 Supported/validated targets in this repository: .NET Standard 2.0 and modern .NET (NET5/NET6/NET7/NET8/NET9).
 
 ## What this package does
 
-- Returns a compact, strongly-typed snapshot of the runtime and process using `RuntimeInfo.GetRuntimeInfo()`.
+- Returns a strongly-typed snapshot of the runtime and process using `RuntimeInfo.GetRuntimeInfo()`.
 - Writes a human-readable runtime summary via `RuntimeInfo.DisplayRuntimeInformation(TextWriter)`.
 - Dumps categorized .NET-related environment variables via `DiagnosticMechanics.DisplayDotNetEnvironmentVariables(TextWriter)` for quick inspection (core runtime settings, GC config, threading, ASP.NET Core, networking, platform-specific flags, container/cloud cues, SDK and package management variables, and legacy compatibility variables).
+- Produces JSON output for easy logging/telemetry via `RuntimeInfo.ToJson()` and `RuntimeInfo.DisplayRuntimeInformationJson(TextWriter)`.
 
 This is useful for:
 - Collecting runtime telemetry during startup.
@@ -37,7 +40,7 @@ Environment variable categories printed include (sample variables shown):
 
 ## Quick usage examples
 
-```
+```csharp
 examples/Program.cs 
 
 using System; 
@@ -92,8 +95,24 @@ CORE RUNTIME ENVIRONMENT VARIABLES
     DOTNET_TieredCompilation: 1
     DOTNET_ROOT: C:\Program Files\dotnet
     DOTNET_ReadyToRun: (not set)
-
 ====================================================================
+```
+
+## JSON serialization
+
+- On NET5+ the library uses `System.Text.Json` for `ToJson()` (no extra dependency).
+- When targeting `netstandard2.0` the library falls back to `Newtonsoft.Json`. If you consume or build `netstandard2.0`, ensure `Newtonsoft.Json` is available (the package is conditionally referenced in the library project).
+
+Example: print JSON to console
+```csharp
+using BlackBoxSolutions.Diagnostics;
+using System;
+
+var json = RuntimeInfo.GetRuntimeInfo().ToJson();
+Console.WriteLine(json);
+
+// or write directly
+RuntimeInfo.DisplayRuntimeInformationJson(Console.Out);
 ```
 
 ## Integration notes
@@ -105,5 +124,18 @@ CORE RUNTIME ENVIRONMENT VARIABLES
 See the repository for examples and unit tests. Create issues or PRs for additional environment checks
 or output formats (JSON export is a planned enhancement).
 
+## NuGet package
+
+Package ID: `BlackBoxSolutions.RuntimeDiagnostics`
+
+Install:
+`dotnet add package BlackBoxSolutions.RuntimeDiagnostics`
+
+## Versioning
+
+This project uses Nerdbank.GitVersioning to generate package versions from the Git commit history. Tag releases with semver tags (e.g. `v1.0.0`) and the CI workflow will pack and publish the resulting package.
+
+## License
+GPL-3.0 License. See [LICENSE](LICENSE) file for details.
 
 
