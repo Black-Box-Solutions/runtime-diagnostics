@@ -6,6 +6,8 @@ GC, JIT, ASP.NET Core, networking, platform and container configuration used for
 
 Supported/validated targets in this repository: .NET Standard 2.0 and modern .NET (NET5/NET6/NET7/NET8/NET9).
 
+[![wakatime](https://wakatime.com/badge/github/Black-Box-Solutions/runtime-diagnostics.svg)](https://wakatime.com/badge/github/Black-Box-Solutions/runtime-diagnostics)
+
 ## What this package does
 
 - Returns a strongly-typed snapshot of the runtime and process using `RuntimeInfo.GetRuntimeInfo()`.
